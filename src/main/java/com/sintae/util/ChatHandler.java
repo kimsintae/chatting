@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
@@ -17,8 +18,7 @@ public class ChatHandler extends TextWebSocketHandler{
 	
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		System.out.println("afterConnectionEstablished called ");
-		System.out.println(sessionList.size());
+		System.out.println("afterConnectionEstablished (접속자수 ) "+ sessionList.size());
 		sessionList.add(session);
 	}
 	
@@ -27,14 +27,12 @@ public class ChatHandler extends TextWebSocketHandler{
 		System.out.println("handleTextMessage called : "+message.getPayload());
 		
 		
-		//브라우저로부터 json 메세지를 받아서 파싱
 		ObjectMapper om = new ObjectMapper();
 		Message msg = om.readValue(message.getPayload(), Message.class);
 		
 		
-		// 연결된 유저들로부터 온 텍스트들을 보냄
 		for(WebSocketSession sess: sessionList) {
-			sess.sendMessage(new TextMessage(msg.getName()+": "+msg.getMessage()));
+			sess.sendMessage(new TextMessage(msg.getName()+"= "+msg.getMessage()));
 		}
 	}
 	
@@ -43,6 +41,11 @@ public class ChatHandler extends TextWebSocketHandler{
 		System.out.println("afterConnectionClosed called ");
 		sessionList.remove(session);
 	}
-	
+
+	@Override
+	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
+		
+		
+	}
 	
 }

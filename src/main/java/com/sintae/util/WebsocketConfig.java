@@ -20,8 +20,6 @@ public class WebsocketConfig implements WebSocketConfigurer{
 
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		//웹소켓 주소 설정
-		//핸들러와 매핑
 		registry.addHandler(roomHandler, "/roomChat").addHandler(chatHandler, "/chat").setAllowedOrigins("*");
 
 	}
