@@ -4,6 +4,7 @@ public class Message {
 
 	private String name;
 	private String message;
+	private String type;
 	public String getName() {
 		return name;
 	}
@@ -15,6 +16,12 @@ public class Message {
 	}
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 	

@@ -31,21 +31,26 @@ public class ChatHandler extends TextWebSocketHandler{
 		Message msg = om.readValue(message.getPayload(), Message.class);
 		
 		
-		for(WebSocketSession sess: sessionList) {
-			sess.sendMessage(new TextMessage(msg.getName()+"= "+msg.getMessage()));
+			for(WebSocketSession sess: sessionList) {
+				
+				switch (msg.getType()) {
+				case "enter"://입장시
+					sess.sendMessage(new TextMessage(msg.getName()+" 님이 입장하셨습니다. "));
+					break;
+				case "msg"://채팅시
+					sess.sendMessage(new TextMessage(msg.getName()+" : "+msg.getMessage()));
+					break;	
+				case "exit"://퇴장시
+					sess.sendMessage(new TextMessage(msg.getName()+" 님이 퇴장하셨습니다. "));
+					break;
+				}
+				
+			}
 		}
-	}
 	
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		System.out.println("afterConnectionClosed called ");
 		sessionList.remove(session);
 	}
-
-	@Override
-	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-		
-		
-	}
-	
 }

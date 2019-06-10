@@ -60,10 +60,16 @@
     </div>
 </div>
  <script>
+ 
+ /*  
+ 	- template - 
+ 	'{"type":"????","name":"${user.name}","message":"'+$("#message").val()+'"}'
+ */
+ 
 	$(document).ready(function(){
 		$("#chatForm").submit(function(event){
 			event.preventDefault();
-			send();
+			send('{"type":"msg","name":"${user.name}","message":"'+$("#message").val()+'"}');
 			$("#message").val('').focus();
 		});
 	});
@@ -78,18 +84,19 @@
 	// 퇴장했을때 호출되는 함수
 	sock.onclose = function(){
 		$("#chatBody").append("connetion exit");
+		send('{"type":"exit","name":"${user.name}","message":"'+$("#message").val()+'"}');
 	}
 	
 	// 입장했을 때 호출되는 함수
 	sock.onopen = function(){
 		var html = "<div class=\"userName\">${user.name}</div>";
 		$("#userList").append(html);
+		send('{"type":"enter","name":"${user.name}","message":"'+$("#message").val()+'"}');
 	}
 	
 	// websocket 으로 메세지(json) 보내기
-	function send(){
-		var json = '{"name":"${user.name}","message":"'+$("#message").val()+'"}';
-		sock.send(json);
+	function send(msg){
+		sock.send(msg);
 	}
 
 	

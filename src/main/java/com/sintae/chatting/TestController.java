@@ -27,7 +27,6 @@ public class TestController {
 	 */
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public String home() {
-		logger.info("Welcome login!.");
 		return "home";
 	}
 

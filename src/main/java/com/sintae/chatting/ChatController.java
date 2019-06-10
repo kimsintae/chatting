@@ -45,8 +45,6 @@ public class ChatController {
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public String loginCheck(@RequestParam("uname") String name, @RequestParam("pswd") String pswd) {
 		logger.info("login");
-
-		
 		if(name.equals("kimsintae")&&pswd.equals("1234")) {
 			user = new UserVO(name,pswd);
 		}else if(name.equals("ramos")&&pswd.equals("54321")) {

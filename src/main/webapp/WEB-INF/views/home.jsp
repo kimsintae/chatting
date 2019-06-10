@@ -39,6 +39,7 @@
 		
 		sock.onopen = function(){
 			$("#chat").append("connetion open !");
+			send();
 		}
 		
 		// websocket 으로 메세지(json) 보내기
