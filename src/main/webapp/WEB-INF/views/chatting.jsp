@@ -74,23 +74,21 @@
 		});
 	});
 	
+ 	
+ 	
 	var sock = new SockJS("/chat");
 	// websocket 으로부터 받은 메세지를 처리
 	sock.onmessage = function(e){
-		console.log("onmessage = "+e.data);
 		$("#chatBody").append(e.data + "<br/>");
 	}
 	
 	// 퇴장했을때 호출되는 함수
 	sock.onclose = function(){
-		$("#chatBody").append("connetion exit");
 		send('{"type":"exit","name":"${user.name}","message":"'+$("#message").val()+'"}');
 	}
 	
 	// 입장했을 때 호출되는 함수
 	sock.onopen = function(){
-		var html = "<div class=\"userName\">${user.name}</div>";
-		$("#userList").append(html);
 		send('{"type":"enter","name":"${user.name}","message":"'+$("#message").val()+'"}');
 	}
 	
@@ -100,6 +98,8 @@
 	}
 
 	
+	
+
 </script>   
 </body>
 </html>

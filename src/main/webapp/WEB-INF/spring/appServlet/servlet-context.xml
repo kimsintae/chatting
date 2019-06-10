@@ -25,9 +25,11 @@
 	
 	<beans:bean id="chatHandler" class="com.sintae.util.ChatHandler"/>
 	<beans:bean id="roomHandler" class="com.sintae.util.RoomHandler"/>
+	<beans:bean id="userHandler" class="com.sintae.util.UserHandler"/>
 	<websocket:handlers>
 		<websocket:mapping handler="chatHandler" path="/chat"/>
 		<websocket:mapping handler="roomHandler" path="/roomChat"/>
+		<websocket:mapping handler="userHandler" path="/userList"/>
 		<websocket:sockjs/>
 	</websocket:handlers>
 	
