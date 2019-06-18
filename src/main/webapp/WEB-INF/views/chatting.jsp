@@ -44,7 +44,8 @@
 <h2 class="text-primary" style="margin: 20px;">Chatting v0.1</h2>
 <div class="row">
     <div id="userList" class="bg-info col-sm-2" style="height: 600px;">
-        <h6>접속자 목록 </h6>
+       
+       
     </div>
     <div id="chatBody" class="bg-info col-sm-8" style="height: 600px; overflow-y: scroll">
     </div>
@@ -79,8 +80,6 @@
  	
 	// websocket 으로부터 받은 메세지를 처리
 	sock.onmessage = function(e){
-		
-		console.log(e.data)
 		var json = JSON.parse(e.data);
 		handleMsg(json);
 		/* var json = JSON.parse(e.data);
@@ -102,16 +101,25 @@
 	
 	// websocket 으로 부터 받아온 json 처리
 	function handleMsg(json){
-		switch (json.type) {
+		console.log(json)
+ 		switch (json.type) {
 		case "enter":
+			$("#userList").empty();
+			$.each(json.others, function(index, item){ 
+				$("#userList").append(item + "<br/>");
+			});
 			$("#chatBody").append(json.text + "<br/>");
-			$("#userList").append(json.name + "<br/>");
+			
 			break;
 		case "msg":
 			
 			break;
 		case "exit":
-			
+			$("#userList").empty();
+			$.each(json.others, function(index, item){ 
+				$("#userList").append(item + "<br/>");
+			});
+			$("#chatBody").append(json.text + "<br/>");
 			break;
 		}
 	}

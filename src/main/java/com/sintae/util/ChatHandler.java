@@ -25,29 +25,28 @@ public class ChatHandler extends TextWebSocketHandler{
 	
 	private List<WebSocketSession> sessionList = new ArrayList<WebSocketSession>();
 	private HashMap<String, String> userList = new HashMap<String, String>();
+	private List<String> users = null; // 채팅 접속자 리스트
+	private Message msg = null;
+	private ObjectMapper om = new ObjectMapper();
 	
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		System.out.println("afterConnectionEstablished");
+		System.out.println("1. afterConnectionEstablished");
 		// 접속했을 떄
 		sessionList.add(session);
 		//getId 의 세션값은 브라우저의 고유 값이기 때문에 다른 사용자가 입장해도 고유 세션값은  브라우저마다 동일하다.
-		for(WebSocketSession user : sessionList) {
-
-			user.sendMessage(new TextMessage(user.getId()));
-		}
-		
-		
 	}
 	
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-		System.out.println("handleTextMessage");
-		ObjectMapper om = new ObjectMapper();
-		Message msg = om.readValue(message.getPayload(), Message.class);
+		System.out.println("2. handleTextMessage");
+		
+		msg = om.readValue(message.getPayload(), Message.class);
+		
+		
 		
 		userList.put(session.getId(), msg.getName());
-		
+		users =  new ArrayList<String>(userList.values());
 		/*
 		 *  user : 내 자신
 		 *  session : 상대방
@@ -58,7 +57,8 @@ public class ChatHandler extends TextWebSocketHandler{
 				switch (msg.getType()) {
 				case "enter"://입장시
 					String enter_text = user.getId().equals(session.getId()) ? " 님 환영합니다. 즐거운 채팅 되세요 ^^" : " 님이 입장하셨습니다. ";
-					user.sendMessage(new TextMessage("{\"type\":\"enter\",\"name\":\""+msg.getName()+"\",\"text\":\""+msg.getName()+enter_text+"\"}"));
+					String target = user.getId().equals(session.getId()) ? "me" : "other";
+					user.sendMessage(new TextMessage("{\"type\":\"enter\",\"name\":\""+msg.getName()+"\",\"others\":"+om.writeValueAsString(userList)+",\"text\":\""+msg.getName()+enter_text+"\",\"target\":\""+target+"\"}"));
 					break;
 				case "msg"://채팅시
 					String msg_style = user.getId().equals(session.getId()) ? "'font-weight:bold;color:red;'" : "color:black;'";
@@ -74,11 +74,16 @@ public class ChatHandler extends TextWebSocketHandler{
 	
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-		System.out.println("afterConnectionClosed");
-		logger.info("afterConnectionClosed called ");
+		System.out.println("3. afterConnectionClosed");
+
+		// 퇴장한 유저이름
+		String outUser = userList.get(session.getId());
+		
 		userList.remove(session.getId());
-		System.out.println(userList.toString());
 		sessionList.remove(session);
+		for(WebSocketSession user : sessionList) {
+			user.sendMessage(new TextMessage("{\"type\":\"exit\",\"outUser\":\""+outUser+"\",\"others\":"+om.writeValueAsString(userList)+",\"text\":\""+outUser+"님이 퇴장하셨습니다.\"}"));
+		}
 		
 	}
 	
