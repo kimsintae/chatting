@@ -69,35 +69,52 @@
 	$(document).ready(function(){
 		$("#chatForm").submit(function(event){
 			event.preventDefault();
-			send('{"type":"msg","name":"${user.name}","message":"'+$("#message").val()+'"}');
+			sock.send('{"type":"msg","name":"${user.name}","message":"'+$("#message").val()+'"}');
 			$("#message").val('').focus();
 		});
 	});
-	
  	
- 	
+ 	// websocket 연결 주소
 	var sock = new SockJS("/chat");
+ 	
 	// websocket 으로부터 받은 메세지를 처리
 	sock.onmessage = function(e){
-		$("#chatBody").append(e.data + "<br/>");
+		
+		console.log(e.data)
+		var json = JSON.parse(e.data);
+		handleMsg(json);
+		/* var json = JSON.parse(e.data);
+		console.log(typeof json.list);
+		handleMsg(json); */
 	}
 	
 	// 퇴장했을때 호출되는 함수
 	sock.onclose = function(){
-		send('{"type":"exit","name":"${user.name}","message":"'+$("#message").val()+'"}');
+		sock.send('{"type":"exit","name":"${user.name}","message":"'+$("#message").val()+'"}');
 	}
 	
 	// 입장했을 때 호출되는 함수
 	sock.onopen = function(){
-		send('{"type":"enter","name":"${user.name}","message":"'+$("#message").val()+'"}');
-	}
-	
-	// websocket 으로 메세지(json) 보내기
-	function send(msg){
-		sock.send(msg);
+		sock.send('{"type":"enter","name":"${user.name}","message":""}');
+		//$("#userList").append("<span>${user.name}</span>");
 	}
 
 	
+	// websocket 으로 부터 받아온 json 처리
+	function handleMsg(json){
+		switch (json.type) {
+		case "enter":
+			$("#chatBody").append(json.text + "<br/>");
+			$("#userList").append(json.name + "<br/>");
+			break;
+		case "msg":
+			
+			break;
+		case "exit":
+			
+			break;
+		}
+	}
 	
 
 </script>   

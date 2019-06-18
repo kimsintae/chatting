@@ -18,7 +18,6 @@ public class RoomHandler extends TextWebSocketHandler{
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		System.out.println("afterConnectionEstablished called ");
-		System.out.println(roomList.size());
 		roomList.add(session);
 	}
 	
